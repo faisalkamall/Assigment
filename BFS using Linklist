@@ -1,0 +1,149 @@
+
+#include<stdio.h>
+#include<stdlib.h>
+
+
+struct node
+{
+    int data;
+    struct node* next;
+};
+
+typedef struct node NODE;
+
+NODE *getnode()
+{
+    NODE *newnode=(NODE *)malloc (sizeof(NODE));
+    newnode->next=NULL;
+    return newnode;
+}
+
+NODE* dequeue(NODE* start)
+{
+    if(start==NULL)
+    {
+        return start;
+    }
+    if(start->next==NULL)
+    {
+        free(start);
+        start=NULL;
+        return start;
+    }
+    NODE* temp=start;
+    start=start->next;
+    free(temp);
+    return start;
+}
+
+NODE* enqueue(NODE *start,int n)
+{
+    NODE* newnode=getnode();
+    newnode->data=n;
+    if(start==NULL)
+    {
+        return newnode;
+    }
+    NODE* temp=start;
+    while(temp->next!=NULL){
+        temp=temp->next;
+    }
+    temp->next=newnode;
+    return start;
+}
+
+
+void init(NODE* adj,int v)
+{
+    for(int i=0;i<v;i++)
+    {   
+        adj[i].next=NULL;
+        adj[i].data=0;
+    }
+}
+
+void addEdge(NODE* adj,int u,int v)
+{
+    if(adj[u].next==NULL)
+    {
+        NODE* temp=getnode();
+        temp->data=v;
+        adj[u].next=temp;
+    }
+    else
+    {
+        NODE* temp=getnode();
+        temp->data=v;
+        temp->next=adj[u].next;
+        adj[u].next=temp;
+    }
+    if(adj[v].next==NULL)
+    {
+        NODE* temp=getnode();
+        temp->data=u;
+        adj[v].next=temp;
+    }
+    else
+    {
+        NODE* temp=getnode();
+        temp->data=u;
+        temp->next=adj[v].next;
+        adj[v].next=temp;
+    }
+}
+
+void bfs(int v, NODE* adj)
+{
+    NODE *queue=NULL;
+    queue=enqueue(queue,v);
+    adj[v].data=1;
+    printf("\nStarted bfs\n");
+    while(queue!=NULL)
+    {   
+        int x=queue->data;
+        queue=dequeue(queue);
+        NODE* temp=adj[x].next;
+        printf("%d->",++x);
+        while(temp!=NULL)
+        {   
+            if(adj[temp->data].data==0)
+            {
+                queue=enqueue(queue,temp->data);
+                adj[temp->data].data=1;
+            }
+            temp=temp->next;
+        }
+    }
+    printf("\n****\n");
+
+}
+
+int main()
+{
+    int n,v,u,e;
+    NODE* adj;
+    printf("\nEnter the number of vertices:");
+    scanf("%d",&n);
+    adj=(NODE*)malloc(n*sizeof(NODE));
+    init(adj,n);
+    printf("\nEnter the number of edges:");
+    scanf("%d",&e);
+    printf("Enter the edges:\n");
+    for(int i=0;i<e;i++)
+    {
+        scanf("%d%d",&u,&v);
+        addEdge(adj,--u,--v);
+    }
+    for(int i=0;i<n;i++)
+    {
+        NODE* temp=adj[i].next;
+        printf("|%d|->",i);
+        while(temp!=NULL)
+        {
+            printf("%d->",temp->data);
+            temp=temp->next;
+        }
+        printf("\n");
+    }
+    bfs(0,adj);
+}
