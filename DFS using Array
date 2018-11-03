@@ -1,0 +1,59 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+#define MAX_VERTEX 100
+
+
+//visited array
+int vis[MAX_VERTEX]={0};
+//adj matrix
+int adj[MAX_VERTEX][MAX_VERTEX]={0};
+
+void DFS(int s, int v)
+{
+    vis[s]=1;
+    //printf("%d",s+1);
+    for(int i=0;i<v;i++)
+    {
+        if(adj[s][i] && !vis[i])
+        {
+            printf("%d",i+1);
+            DFS(i,v);
+        }
+    }
+}
+
+
+int main()
+{
+    int u,v;
+    //number of vertices
+    int nv;
+    //number of edges
+    int e;
+    printf("\nEnter the number of vertices:");
+    scanf("%d",&nv);
+    printf("Enter the number of edges:");
+    scanf("%d",&e);
+    printf("Enter the edges\n");
+    for (int i=0;i<e;i++)
+    {
+        scanf("%d%d",&u,&v);
+        adj[--u][--v]=1;
+    }
+
+    printf("\n\nThe adj matrix is as follows:\n");
+    for(int i=0;i<nv;i++)
+    {
+        for(int j=0;j<nv;j++)
+        {
+            printf("%d ",adj[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("Enter the source for bfs:");
+    int s;
+    scanf("%d",&s);
+    DFS(--s,nv);
+}
